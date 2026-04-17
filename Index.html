@@ -1,0 +1,291 @@
+```html
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Negocio - Gestión Total</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MONETIZACIÓN ADSTERRA (JS Principal) -->
+    <script type='text/javascript' src='https://pl29004761.profitablecpmratenetwork.com/30/eb/10/30eb107ad8464e31b5f5305fbb3a1e7e.js'></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        /* Estilos para los contenedores de publicidad */
+        .ad-banner { background: #f9fafb; border: 1px dashed #d1d5db; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen pb-20">
+
+    <!-- Header modificado para incluir Link Directo -->
+    <header class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+        <h1 id="app-title" class="text-xl font-bold">Mi Negocio</h1>
+        <a href="https://www.profitablecpmratenetwork.com/yt9pjia2en?key=4b88d642b785f6e2cd7ff0cc2b3b9470" target="_blank" class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-1 rounded-full animate-pulse">
+            SOPORTE AD
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="p-4 max-w-md mx-auto">
+
+        <!-- BANNER DE PUBLICIDAD (LINK DIRECTO) -->
+        <div class="ad-banner shadow-sm">
+            <p class="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Publicidad Recomendada</p>
+            <a href="https://www.profitablecpmratenetwork.com/yt9pjia2en?key=4b88d642b785f6e2cd7ff0cc2b3b9470" target="_blank" class="text-blue-600 font-bold text-sm hover:underline">
+                Haz clic aquí para obtener ofertas exclusivas
+            </a>
+        </div>
+        
+        <!-- SECCIÓN: VENTAS (CAJA) -->
+        <section id="ventas" class="tab-content active">
+            <h2 class="text-lg font-bold mb-4 flex items-center">🛒 Nueva Venta</h2>
+            
+            <div class="bg-white p-4 rounded-lg shadow mb-4">
+                <label class="block text-sm font-medium text-gray-700">Seleccionar Producto</label>
+                <select id="select-producto" class="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-gray-50">
+                    <option value="">-- Elige un producto --</option>
+                </select>
+                <button onclick="agregarAlCarrito()" class="mt-3 w-full bg-blue-500 text-white py-2 rounded-md font-bold hover:bg-blue-700">Agregar al Carrito</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="font-bold border-b pb-2 mb-2">Resumen</h3>
+                <div id="lista-carrito" class="space-y-2 mb-4 min-h-[50px]">
+                    <!-- Items del carrito -->
+                </div>
+                <div class="border-t pt-2 space-y-2">
+                    <div class="flex justify-between text-xl font-bold text-blue-700">
+                        <span>Total:</span>
+                        <span>$<span id="total-venta">0.00</span></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm font-medium">Pago:</label>
+                        <input type="number" id="pago-recibido" oninput="calcularCambio()" placeholder="0.00" class="flex-1 p-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div class="flex justify-between text-lg font-bold text-green-600">
+                        <span>Cambio:</span>
+                        <span>$<span id="cambio-cliente">0.00</span></span>
+                    </div>
+                </div>
+                <button onclick="finalizarVenta()" id="btn-finalizar" disabled class="mt-4 w-full bg-green-600 text-white py-3 rounded-md font-bold opacity-50 cursor-not-allowed transition-all">
+                    FINALIZAR VENTA
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: INVENTARIO -->
+        <section id="inventario" class="tab-content">
+            <h2 class="text-lg font-bold mb-4">📦 Inventario</h2>
+            <div class="bg-white p-4 rounded-lg shadow mb-6">
+                <div class="grid grid-cols-1 gap-3">
+                    <input type="text" id="inv-nombre" placeholder="Nombre" class="p-2 border rounded">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="inv-costo-compra" placeholder="Costo Compra" class="p-2 border rounded">
+                        <input type="number" id="inv-costo-venta" placeholder="Costo Venta" class="p-2 border rounded">
+                    </div>
+                    <input type="number" id="inv-stock" placeholder="Stock" class="p-2 border rounded">
+                    <button onclick="guardarProducto()" class="bg-blue-600 text-white py-2 rounded font-bold">Guardar</button>
+                </div>
+            </div>
+            <div id="lista-inventario" class="space-y-3"></div>
+        </section>
+
+        <!-- SECCIÓN: GANANCIAS -->
+        <section id="ganancias" class="tab-content">
+            <h2 class="text-lg font-bold mb-4">💰 Reporte</h2>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <p class="text-[10px] text-gray-500 uppercase">Ventas Hoy</p>
+                    <p class="text-xl font-bold text-blue-600">$<span id="ganancia-bruta-hoy">0.00</span></p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <p class="text-[10px] text-gray-500 uppercase">Utilidad Hoy</p>
+                    <p class="text-xl font-bold text-green-600">$<span id="ganancia-neta-hoy">0.00</span></p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-50 text-[10px] uppercase text-gray-400">
+                        <tr>
+                            <th class="p-2">Fecha</th>
+                            <th class="p-2 text-right">Venta</th>
+                            <th class="p-2 text-right">Neta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-ganancias"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Menú de Navegación Inferior -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-2 shadow-lg z-50">
+        <button onclick="showTab('ventas')" class="flex flex-col items-center text-blue-600 nav-btn">
+            <span class="text-xl">🛒</span>
+            <span class="text-[10px] font-bold">CAJA</span>
+        </button>
+        <button onclick="showTab('inventario')" class="flex flex-col items-center text-gray-500 nav-btn">
+            <span class="text-xl">📦</span>
+            <span class="text-[10px] font-bold">STOCK</span>
+        </button>
+        <button onclick="showTab('ganancias')" class="flex flex-col items-center text-gray-500 nav-btn">
+            <span class="text-xl">💰</span>
+            <span class="text-[10px] font-bold">REPORTES</span>
+        </button>
+    </nav>
+
+    <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-full text-sm hidden opacity-0 transition-opacity duration-300 z-[100]"></div>
+
+    <script>
+        // --- LOGICA ORIGINAL PRESERVADA ---
+        let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
+        let ventas = JSON.parse(localStorage.getItem('ventas')) || [];
+        let carrito = [];
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-blue-600', 'text-gray-500'));
+            event.currentTarget.classList.replace('text-gray-500', 'text-blue-600');
+            if (tabId === 'ventas') actualizarSelectProductos();
+            if (tabId === 'inventario') renderInventario();
+            if (tabId === 'ganancias') renderGanancias();
+        }
+
+        function guardarProducto() {
+            const nombre = document.getElementById('inv-nombre').value;
+            const costoC = parseFloat(document.getElementById('inv-costo-compra').value);
+            const costoV = parseFloat(document.getElementById('inv-costo-venta').value);
+            const stock = parseInt(document.getElementById('inv-stock').value);
+            if (!nombre || isNaN(costoC)) { showToast("Datos incompletos"); return; }
+            const idx = inventario.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+            if (idx > -1) inventario[idx] = { nombre, costoC, costoV, stock };
+            else inventario.push({ nombre, costoC, costoV, stock });
+            localStorage.setItem('inventario', JSON.stringify(inventario));
+            renderInventario();
+            showToast("Guardado");
+        }
+
+        function renderInventario() {
+            const container = document.getElementById('lista-inventario');
+            container.innerHTML = '';
+            inventario.forEach((p, idx) => {
+                container.innerHTML += `
+                    <div class="bg-white p-3 rounded shadow border-l-4 ${p.stock < 5 ? 'border-red-500' : 'border-blue-500'} flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-sm">${p.nombre}</p>
+                            <p class="text-xs text-gray-400">Venta: $${p.costoV} | Stock: ${p.stock}</p>
+                        </div>
+                        <button onclick="eliminarProducto(${idx})" class="text-red-300">🗑️</button>
+                    </div>`;
+            });
+        }
+
+        function eliminarProducto(idx) {
+            if(confirm("¿Eliminar?")) {
+                inventario.splice(idx, 1);
+                localStorage.setItem('inventario', JSON.stringify(inventario));
+                renderInventario();
+            }
+        }
+
+        function actualizarSelectProductos() {
+            const s = document.getElementById('select-producto');
+            s.innerHTML = '<option value="">-- Elige un producto --</option>';
+            inventario.forEach((p, idx) => { if(p.stock > 0) s.innerHTML += `<option value="${idx}">${p.nombre} ($${p.costoV})</option>`; });
+        }
+
+        function agregarAlCarrito() {
+            const idx = document.getElementById('select-producto').value;
+            if (idx === "") return;
+            const p = inventario[idx];
+            const item = carrito.find(c => c.nombre === p.nombre);
+            if (item) { if(item.cantidad < p.stock) item.cantidad++; else showToast("Sin stock"); }
+            else { carrito.push({ ...p, cantidad: 1 }); }
+            renderCarrito();
+        }
+
+        function renderCarrito() {
+            const list = document.getElementById('lista-carrito');
+            list.innerHTML = '';
+            let t = 0;
+            carrito.forEach((c, idx) => {
+                t += c.costoV * c.cantidad;
+                list.innerHTML += `<div class="flex justify-between text-xs bg-gray-50 p-2 border-b"><span>${c.nombre} x${c.cantidad}</span><b>$${(c.costoV*c.cantidad).toFixed(2)}</b></div>`;
+            });
+            document.getElementById('total-venta').innerText = t.toFixed(2);
+            document.getElementById('btn-finalizar').disabled = carrito.length === 0;
+            document.getElementById('btn-finalizar').classList.toggle('opacity-50', carrito.length === 0);
+            calcularCambio();
+        }
+
+        function calcularCambio() {
+            const total = parseFloat(document.getElementById('total-venta').innerText);
+            const pago = parseFloat(document.getElementById('pago-recibido').value) || 0;
+            document.getElementById('cambio-cliente').innerText = Math.max(0, pago - total).toFixed(2);
+        }
+
+        function finalizarVenta() {
+            const total = parseFloat(document.getElementById('total-venta').innerText);
+            const pago = parseFloat(document.getElementById('pago-recibido').value) || 0;
+            if (pago < total) { showToast("Dinero insuficiente"); return; }
+            
+            let gananciaNeta = 0;
+            carrito.forEach(item => {
+                const inv = inventario.find(p => p.nombre === item.nombre);
+                if (inv) {
+                    inv.stock -= item.cantidad;
+                    gananciaNeta += (inv.costoV - inv.costoC) * item.cantidad;
+                }
+            });
+
+            ventas.push({ fecha: new Date().toISOString().split('T')[0], total, ganancia: gananciaNeta });
+            localStorage.setItem('inventario', JSON.stringify(inventario));
+            localStorage.setItem('ventas', JSON.stringify(ventas));
+            
+            carrito = [];
+            document.getElementById('pago-recibido').value = '';
+            renderCarrito();
+            actualizarSelectProductos();
+            showToast("Venta Exitosa");
+        }
+
+        function renderGanancias() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const deHoy = ventas.filter(v => v.fecha === hoy);
+            document.getElementById('ganancia-bruta-hoy').innerText = deHoy.reduce((a, b) => a + b.total, 0).toFixed(2);
+            document.getElementById('ganancia-neta-hoy').innerText = deHoy.reduce((a, b) => a + b.ganancia, 0).toFixed(2);
+            
+            const tabla = document.getElementById('tabla-ganancias');
+            tabla.innerHTML = '';
+            const agrupar = ventas.reduce((acc, v) => {
+                acc[v.fecha] = acc[v.fecha] || { t: 0, g: 0 };
+                acc[v.fecha].t += v.total;
+                acc[v.fecha].g += v.ganancia;
+                return acc;
+            }, {});
+            Object.keys(agrupar).reverse().forEach(f => {
+                tabla.innerHTML += `<tr class="border-b"><td class="p-2">${f}</td><td class="p-2 text-right">$${agrupar[f].t.toFixed(2)}</td><td class="p-2 text-right font-bold">$${agrupar[f].g.toFixed(2)}</td></tr>`;
+            });
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('opacity-100'), 50);
+            setTimeout(() => { t.classList.remove('opacity-100'); setTimeout(() => t.classList.add('hidden'), 300); }, 2000);
+        }
+
+        actualizarSelectProductos();
+    </script>
+</body>
+</html>
+
+```
