@@ -1,289 +1,456 @@
 ```html
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Negocio - Gestión Total</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>POS Mi Negocio - Ultra Pro</title>
     
-    <!-- MONETIZACIÓN ADSTERRA (JS Principal) -->
-    <script type='text/javascript' src='https://pl29004761.profitablecpmratenetwork.com/30/eb/10/30eb107ad8464e31b5f5305fbb3a1e7e.js'></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- SDK DE PAYPAL -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AXVaElZM1rzge1h2U5R21cmz9rxRz79F3g691EsTwgpycnc2jujm_TbSAllf7bnxpe92-XS_dJnUfRi-&currency=USD"></script>
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        /* Estilos para los contenedores de publicidad */
-        .ad-banner { background: #f9fafb; border: 1px dashed #d1d5db; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .premium-active #ads-section, .premium-active #nav-premium-btn { display: none !important; }
+        .premium-active #badge-pro { display: inline-block !important; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen pb-20">
+<body class="bg-slate-50 min-h-screen pb-24">
 
-    <!-- Header modificado para incluir Link Directo -->
-    <header class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
-        <h1 id="app-title" class="text-xl font-bold">Mi Negocio</h1>
-        <a href="https://www.profitablecpmratenetwork.com/yt9pjia2en?key=4b88d642b785f6e2cd7ff0cc2b3b9470" target="_blank" class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-1 rounded-full animate-pulse">
-            SOPORTE AD
-        </a>
+    <!-- Header -->
+    <header class="bg-blue-700 text-white p-4 sticky top-0 z-50 shadow-lg flex justify-between items-center">
+        <div>
+            <h1 class="font-black text-lg leading-none">MI NEGOCIO</h1>
+            <span id="badge-pro" class="text-[9px] bg-yellow-400 text-blue-900 px-2 py-0.5 rounded-full font-black hidden">PRO UNLOCKED</span>
+        </div>
+        <button onclick="router.load('premium')" id="nav-premium-btn" class="bg-blue-800 px-3 py-1 rounded-lg text-[10px] font-bold border border-blue-400">
+            👑 GO PREMIUM
+        </button>
     </header>
 
-    <!-- Main Content -->
-    <main class="p-4 max-w-md mx-auto">
-
-        <!-- BANNER DE PUBLICIDAD (LINK DIRECTO) -->
-        <div class="ad-banner shadow-sm">
-            <p class="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Publicidad Recomendada</p>
-            <a href="https://www.profitablecpmratenetwork.com/yt9pjia2en?key=4b88d642b785f6e2cd7ff0cc2b3b9470" target="_blank" class="text-blue-600 font-bold text-sm hover:underline">
-                Haz clic aquí para obtener ofertas exclusivas
-            </a>
+    <!-- Publicidad Adsterra -->
+    <div id="ads-section" class="p-2">
+        <div class="bg-white border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center">
+            <p class="text-[9px] text-gray-400 font-bold mb-1 tracking-widest uppercase">Anuncio</p>
+            <div id="ad-container">
+                <script type="text/javascript">
+                    if(localStorage.getItem('app_premium') !== 'true') {
+                        document.write("<script type='text/javascript' src='https://pl29004761.profitablecpmratenetwork.com/30/eb/10/30eb107ad8464e31b5f5305fbb3a1e7e.js'><\/script>");
+                    }
+                </script>
+            </div>
+            <a href="https://www.profitablecpmratenetwork.com/yt9pjia2en?key=4b88d642b785f6e2cd7ff0cc2b3b9470" target="_blank" class="text-blue-500 text-[10px] font-bold underline mt-1 block">Ver oferta para apoyar</a>
         </div>
+    </div>
+
+    <!-- MAIN -->
+    <main class="p-4 max-w-lg mx-auto">
         
-        <!-- SECCIÓN: VENTAS (CAJA) -->
-        <section id="ventas" class="tab-content active">
-            <h2 class="text-lg font-bold mb-4 flex items-center">🛒 Nueva Venta</h2>
-            
-            <div class="bg-white p-4 rounded-lg shadow mb-4">
-                <label class="block text-sm font-medium text-gray-700">Seleccionar Producto</label>
-                <select id="select-producto" class="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-gray-50">
-                    <option value="">-- Elige un producto --</option>
-                </select>
-                <button onclick="agregarAlCarrito()" class="mt-3 w-full bg-blue-500 text-white py-2 rounded-md font-bold hover:bg-blue-700">Agregar al Carrito</button>
+        <!-- PÁGINA: CAJA -->
+        <section id="page-caja" class="page active">
+            <div class="flex justify-between items-end mb-4">
+                <h2 class="text-2xl font-black text-slate-800">Caja</h2>
+                <button onclick="app.clearCart()" class="text-xs text-red-500 font-bold uppercase">Vaciar</button>
             </div>
 
-            <div class="bg-white p-4 rounded-lg shadow">
-                <h3 class="font-bold border-b pb-2 mb-2">Resumen</h3>
-                <div id="lista-carrito" class="space-y-2 mb-4 min-h-[50px]">
-                    <!-- Items del carrito -->
-                </div>
-                <div class="border-t pt-2 space-y-2">
-                    <div class="flex justify-between text-xl font-bold text-blue-700">
-                        <span>Total:</span>
-                        <span>$<span id="total-venta">0.00</span></span>
+            <!-- Selector de Productos -->
+            <div class="bg-white p-4 rounded-3xl shadow-sm mb-4 border border-gray-100">
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Producto</label>
+                        <select id="sel-caja" class="w-full mt-1 p-4 bg-gray-50 rounded-2xl outline-none text-sm appearance-none border-2 border-transparent focus:border-blue-500 transition-all"></select>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium">Pago:</label>
-                        <input type="number" id="pago-recibido" oninput="calcularCambio()" placeholder="0.00" class="flex-1 p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div class="flex justify-between text-lg font-bold text-green-600">
-                        <span>Cambio:</span>
-                        <span>$<span id="cambio-cliente">0.00</span></span>
+                    <div class="flex gap-2">
+                        <div class="w-1/3">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cant.</label>
+                            <input id="num-cant" type="number" value="1" min="1" class="w-full mt-1 p-4 bg-gray-50 rounded-2xl outline-none text-center font-bold">
+                        </div>
+                        <button onclick="app.addToCart()" class="flex-1 mt-5 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-200 active:scale-95 transition-all">
+                            AÑADIR
+                        </button>
                     </div>
                 </div>
-                <button onclick="finalizarVenta()" id="btn-finalizar" disabled class="mt-4 w-full bg-green-600 text-white py-3 rounded-md font-bold opacity-50 cursor-not-allowed transition-all">
-                    FINALIZAR VENTA
-                </button>
+            </div>
+
+            <!-- Lista del Carrito -->
+            <div id="cart-list" class="bg-white rounded-3xl shadow-sm min-h-[150px] p-4 mb-4 border border-gray-50"></div>
+
+            <!-- Panel de Pago -->
+            <div class="bg-slate-900 rounded-[32px] p-6 text-white shadow-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Total a Pagar</span>
+                    <span class="text-4xl font-black text-yellow-400">$<span id="cart-total">0.00</span></span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Efectivo Recibido</label>
+                        <input id="pay-received" type="number" oninput="app.calcChange()" placeholder="0.00" class="w-full mt-1 bg-slate-800 border-none rounded-2xl p-4 text-2xl font-bold text-green-400 outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    
+                    <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Cambio:</span>
+                        <span class="text-2xl font-black text-white">$<span id="pay-change">0.00</span></span>
+                    </div>
+
+                    <button id="btn-finalizar" onclick="app.checkout()" disabled class="w-full py-5 bg-green-500 text-slate-900 rounded-2xl font-black text-lg shadow-xl opacity-50 transition-all">
+                        REGISTRAR VENTA
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- SECCIÓN: INVENTARIO -->
-        <section id="inventario" class="tab-content">
-            <h2 class="text-lg font-bold mb-4">📦 Inventario</h2>
-            <div class="bg-white p-4 rounded-lg shadow mb-6">
-                <div class="grid grid-cols-1 gap-3">
-                    <input type="text" id="inv-nombre" placeholder="Nombre" class="p-2 border rounded">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="inv-costo-compra" placeholder="Costo Compra" class="p-2 border rounded">
-                        <input type="number" id="inv-costo-venta" placeholder="Costo Venta" class="p-2 border rounded">
-                    </div>
-                    <input type="number" id="inv-stock" placeholder="Stock" class="p-2 border rounded">
-                    <button onclick="guardarProducto()" class="bg-blue-600 text-white py-2 rounded font-bold">Guardar</button>
+        <!-- PÁGINA: STOCK -->
+        <section id="page-stock" class="page">
+            <h2 class="text-2xl font-black text-slate-800 mb-4">Stock</h2>
+            <div class="bg-white p-5 rounded-3xl shadow-sm mb-6 space-y-3">
+                <input id="in-name" type="text" placeholder="Nombre del Producto" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border border-transparent focus:border-blue-200">
+                <div class="flex gap-2">
+                    <input id="in-cost-c" type="number" placeholder="Costo Compra" class="w-1/2 p-4 bg-gray-50 rounded-2xl outline-none border border-transparent focus:border-blue-200">
+                    <input id="in-cost-v" type="number" placeholder="Precio Venta" class="w-1/2 p-4 bg-gray-50 rounded-2xl outline-none border border-transparent focus:border-blue-200">
                 </div>
+                <input id="in-qty" type="number" placeholder="Stock Inicial" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border border-transparent focus:border-blue-200">
+                <button onclick="app.saveProduct()" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold active:scale-95 transition-all">Guardar en Inventario</button>
             </div>
-            <div id="lista-inventario" class="space-y-3"></div>
+            <div id="list-stock" class="space-y-2"></div>
         </section>
 
-        <!-- SECCIÓN: GANANCIAS -->
-        <section id="ganancias" class="tab-content">
-            <h2 class="text-lg font-bold mb-4">💰 Reporte</h2>
+        <!-- PÁGINA: REPORTES -->
+        <section id="page-reportes" class="page">
+            <h2 class="text-2xl font-black text-slate-800 mb-4">Reportes</h2>
             <div class="grid grid-cols-2 gap-3 mb-6">
-                <div class="bg-white p-4 rounded-lg shadow text-center">
-                    <p class="text-[10px] text-gray-500 uppercase">Ventas Hoy</p>
-                    <p class="text-xl font-bold text-blue-600">$<span id="ganancia-bruta-hoy">0.00</span></p>
+                <div class="bg-indigo-600 p-5 rounded-[2rem] text-white">
+                    <p class="text-[10px] font-black uppercase opacity-60">Ventas Hoy</p>
+                    <p class="text-2xl font-black">$<span id="rep-hoy-b">0.00</span></p>
                 </div>
-                <div class="bg-white p-4 rounded-lg shadow text-center">
-                    <p class="text-[10px] text-gray-500 uppercase">Utilidad Hoy</p>
-                    <p class="text-xl font-bold text-green-600">$<span id="ganancia-neta-hoy">0.00</span></p>
+                <div class="bg-emerald-600 p-5 rounded-[2rem] text-white">
+                    <p class="text-[10px] font-black uppercase opacity-60">Ganancia Hoy</p>
+                    <p class="text-2xl font-black">$<span id="rep-hoy-n">0.00</span></p>
                 </div>
             </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-50 text-[10px] uppercase text-gray-400">
-                        <tr>
-                            <th class="p-2">Fecha</th>
-                            <th class="p-2 text-right">Venta</th>
-                            <th class="p-2 text-right">Neta</th>
-                        </tr>
+            <button onclick="app.exportPDF()" class="w-full bg-red-500 text-white py-4 rounded-2xl font-bold mb-4 shadow-lg shadow-red-100">
+                📄 Generar Reporte PDF
+            </button>
+            <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-gray-100">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-[10px] text-gray-400 font-black uppercase">
+                        <tr><th class="p-4 text-left">Fecha</th><th class="p-4 text-right">Monto</th><th class="p-4 text-right">Neta</th></tr>
                     </thead>
-                    <tbody id="tabla-ganancias"></tbody>
+                    <tbody id="table-report-body" class="divide-y divide-gray-50"></tbody>
                 </table>
             </div>
         </section>
 
+        <!-- PÁGINA: PREMIUM -->
+        <section id="page-premium" class="page">
+            <div class="text-center py-6">
+                <div class="text-6xl mb-4">🚀</div>
+                <h2 class="text-3xl font-black text-slate-800">Premium Pro</h2>
+                <p class="text-gray-500 text-sm mt-2 mb-8">Activa todas las funciones y apoya el proyecto.</p>
+                
+                <div class="bg-white p-8 rounded-[3rem] shadow-2xl border-4 border-blue-50 relative">
+                    <p class="text-5xl font-black text-slate-800 mb-2">$4.99</p>
+                    <p class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-8">Pago Único de por Vida</p>
+                    <ul class="text-left space-y-4 text-sm mb-8">
+                        <li class="flex items-center gap-3">✅ <span class="font-bold">Cero Publicidad</span></li>
+                        <li class="flex items-center gap-3">✅ <span class="font-bold">PDF Ilimitados</span></li>
+                        <li class="flex items-center gap-3">✅ Modo Offline Total</li>
+                    </ul>
+                    <div id="paypal-button-container"></div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Menú de Navegación Inferior -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-2 shadow-lg z-50">
-        <button onclick="showTab('ventas')" class="flex flex-col items-center text-blue-600 nav-btn">
-            <span class="text-xl">🛒</span>
-            <span class="text-[10px] font-bold">CAJA</span>
+    <!-- Modal Ticket/Venta Exitosa -->
+    <div id="modal-ticket" class="modal">
+        <div class="bg-white w-full max-w-xs rounded-[32px] p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">✓</div>
+            <h3 class="text-xl font-black text-slate-800">¡Venta Exitosa!</h3>
+            <p class="text-gray-400 text-sm mb-6">El cambio a entregar es:</p>
+            <p class="text-5xl font-black text-slate-800 mb-8">$<span id="ticket-change">0.00</span></p>
+            <button onclick="app.closeTicket()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-gray-100 flex justify-around p-4 z-50">
+        <button onclick="router.load('caja')" class="nav-icon text-blue-600 flex flex-col items-center">
+            <span class="text-xl">🛒</span><span class="text-[8px] font-black uppercase mt-1">Ventas</span>
         </button>
-        <button onclick="showTab('inventario')" class="flex flex-col items-center text-gray-500 nav-btn">
-            <span class="text-xl">📦</span>
-            <span class="text-[10px] font-bold">STOCK</span>
+        <button onclick="router.load('stock')" class="nav-icon text-gray-400 flex flex-col items-center">
+            <span class="text-xl">📦</span><span class="text-[8px] font-black uppercase mt-1">Stock</span>
         </button>
-        <button onclick="showTab('ganancias')" class="flex flex-col items-center text-gray-500 nav-btn">
-            <span class="text-xl">💰</span>
-            <span class="text-[10px] font-bold">REPORTES</span>
+        <button onclick="router.load('reportes')" class="nav-icon text-gray-400 flex flex-col items-center">
+            <span class="text-xl">📊</span><span class="text-[8px] font-black uppercase mt-1">Reportes</span>
+        </button>
+        <button onclick="router.load('premium')" id="nav-premium-tab" class="nav-icon text-gray-400 flex flex-col items-center">
+            <span class="text-xl">💎</span><span class="text-[8px] font-black uppercase mt-1">Pro</span>
         </button>
     </nav>
 
-    <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-full text-sm hidden opacity-0 transition-opacity duration-300 z-[100]"></div>
+    <div id="toast" class="fixed bottom-28 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-xs font-bold hidden shadow-2xl z-[150]"></div>
 
     <script>
-        // --- LOGICA ORIGINAL PRESERVADA ---
-        let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
-        let ventas = JSON.parse(localStorage.getItem('ventas')) || [];
-        let carrito = [];
+        const app = {
+            state: {
+                inv: JSON.parse(localStorage.getItem('pos_inv')) || [],
+                sales: JSON.parse(localStorage.getItem('pos_sales')) || [],
+                cart: [],
+                premium: localStorage.getItem('app_premium') === 'true'
+            },
 
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-blue-600', 'text-gray-500'));
-            event.currentTarget.classList.replace('text-gray-500', 'text-blue-600');
-            if (tabId === 'ventas') actualizarSelectProductos();
-            if (tabId === 'inventario') renderInventario();
-            if (tabId === 'ganancias') renderGanancias();
-        }
-
-        function guardarProducto() {
-            const nombre = document.getElementById('inv-nombre').value;
-            const costoC = parseFloat(document.getElementById('inv-costo-compra').value);
-            const costoV = parseFloat(document.getElementById('inv-costo-venta').value);
-            const stock = parseInt(document.getElementById('inv-stock').value);
-            if (!nombre || isNaN(costoC)) { showToast("Datos incompletos"); return; }
-            const idx = inventario.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-            if (idx > -1) inventario[idx] = { nombre, costoC, costoV, stock };
-            else inventario.push({ nombre, costoC, costoV, stock });
-            localStorage.setItem('inventario', JSON.stringify(inventario));
-            renderInventario();
-            showToast("Guardado");
-        }
-
-        function renderInventario() {
-            const container = document.getElementById('lista-inventario');
-            container.innerHTML = '';
-            inventario.forEach((p, idx) => {
-                container.innerHTML += `
-                    <div class="bg-white p-3 rounded shadow border-l-4 ${p.stock < 5 ? 'border-red-500' : 'border-blue-500'} flex justify-between items-center">
-                        <div>
-                            <p class="font-bold text-sm">${p.nombre}</p>
-                            <p class="text-xs text-gray-400">Venta: $${p.costoV} | Stock: ${p.stock}</p>
-                        </div>
-                        <button onclick="eliminarProducto(${idx})" class="text-red-300">🗑️</button>
-                    </div>`;
-            });
-        }
-
-        function eliminarProducto(idx) {
-            if(confirm("¿Eliminar?")) {
-                inventario.splice(idx, 1);
-                localStorage.setItem('inventario', JSON.stringify(inventario));
-                renderInventario();
-            }
-        }
-
-        function actualizarSelectProductos() {
-            const s = document.getElementById('select-producto');
-            s.innerHTML = '<option value="">-- Elige un producto --</option>';
-            inventario.forEach((p, idx) => { if(p.stock > 0) s.innerHTML += `<option value="${idx}">${p.nombre} ($${p.costoV})</option>`; });
-        }
-
-        function agregarAlCarrito() {
-            const idx = document.getElementById('select-producto').value;
-            if (idx === "") return;
-            const p = inventario[idx];
-            const item = carrito.find(c => c.nombre === p.nombre);
-            if (item) { if(item.cantidad < p.stock) item.cantidad++; else showToast("Sin stock"); }
-            else { carrito.push({ ...p, cantidad: 1 }); }
-            renderCarrito();
-        }
-
-        function renderCarrito() {
-            const list = document.getElementById('lista-carrito');
-            list.innerHTML = '';
-            let t = 0;
-            carrito.forEach((c, idx) => {
-                t += c.costoV * c.cantidad;
-                list.innerHTML += `<div class="flex justify-between text-xs bg-gray-50 p-2 border-b"><span>${c.nombre} x${c.cantidad}</span><b>$${(c.costoV*c.cantidad).toFixed(2)}</b></div>`;
-            });
-            document.getElementById('total-venta').innerText = t.toFixed(2);
-            document.getElementById('btn-finalizar').disabled = carrito.length === 0;
-            document.getElementById('btn-finalizar').classList.toggle('opacity-50', carrito.length === 0);
-            calcularCambio();
-        }
-
-        function calcularCambio() {
-            const total = parseFloat(document.getElementById('total-venta').innerText);
-            const pago = parseFloat(document.getElementById('pago-recibido').value) || 0;
-            document.getElementById('cambio-cliente').innerText = Math.max(0, pago - total).toFixed(2);
-        }
-
-        function finalizarVenta() {
-            const total = parseFloat(document.getElementById('total-venta').innerText);
-            const pago = parseFloat(document.getElementById('pago-recibido').value) || 0;
-            if (pago < total) { showToast("Dinero insuficiente"); return; }
-            
-            let gananciaNeta = 0;
-            carrito.forEach(item => {
-                const inv = inventario.find(p => p.nombre === item.nombre);
-                if (inv) {
-                    inv.stock -= item.cantidad;
-                    gananciaNeta += (inv.costoV - inv.costoC) * item.cantidad;
+            init() {
+                if(this.state.premium) {
+                    document.body.classList.add('premium-active');
+                    document.getElementById('nav-premium-tab').style.display = 'none';
+                } else {
+                    this.setupPayPal();
                 }
-            });
+                router.load('caja');
+            },
 
-            ventas.push({ fecha: new Date().toISOString().split('T')[0], total, ganancia: gananciaNeta });
-            localStorage.setItem('inventario', JSON.stringify(inventario));
-            localStorage.setItem('ventas', JSON.stringify(ventas));
-            
-            carrito = [];
-            document.getElementById('pago-recibido').value = '';
-            renderCarrito();
-            actualizarSelectProductos();
-            showToast("Venta Exitosa");
-        }
+            setupPayPal() {
+                if (window.paypal) {
+                    paypal.Buttons({
+                        createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: '4.99' } }] }),
+                        onApprove: (data, actions) => actions.order.capture().then(details => {
+                            localStorage.setItem('app_premium', 'true');
+                            this.state.premium = true;
+                            this.showToast("💎 ¡MODO PRO ACTIVADO!");
+                            setTimeout(() => location.reload(), 1500);
+                        })
+                    }).render('#paypal-button-container');
+                }
+            },
 
-        function renderGanancias() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const deHoy = ventas.filter(v => v.fecha === hoy);
-            document.getElementById('ganancia-bruta-hoy').innerText = deHoy.reduce((a, b) => a + b.total, 0).toFixed(2);
-            document.getElementById('ganancia-neta-hoy').innerText = deHoy.reduce((a, b) => a + b.ganancia, 0).toFixed(2);
-            
-            const tabla = document.getElementById('tabla-ganancias');
-            tabla.innerHTML = '';
-            const agrupar = ventas.reduce((acc, v) => {
-                acc[v.fecha] = acc[v.fecha] || { t: 0, g: 0 };
-                acc[v.fecha].t += v.total;
-                acc[v.fecha].g += v.ganancia;
-                return acc;
-            }, {});
-            Object.keys(agrupar).reverse().forEach(f => {
-                tabla.innerHTML += `<tr class="border-b"><td class="p-2">${f}</td><td class="p-2 text-right">$${agrupar[f].t.toFixed(2)}</td><td class="p-2 text-right font-bold">$${agrupar[f].g.toFixed(2)}</td></tr>`;
-            });
-        }
+            saveProduct() {
+                const n = document.getElementById('in-name').value;
+                const cv = parseFloat(document.getElementById('in-cost-v').value);
+                const cc = parseFloat(document.getElementById('in-cost-c').value) || 0;
+                const qty = parseInt(document.getElementById('in-qty').value) || 0;
+                if(!n || isNaN(cv)) return this.showToast("Nombre y precio requeridos");
 
-        function showToast(m) {
-            const t = document.getElementById('toast');
-            t.innerText = m;
-            t.classList.remove('hidden');
-            setTimeout(() => t.classList.add('opacity-100'), 50);
-            setTimeout(() => { t.classList.remove('opacity-100'); setTimeout(() => t.classList.add('hidden'), 300); }, 2000);
-        }
+                this.state.inv.push({ name: n, costV: cv, costC: cc, stock: qty });
+                this.persist();
+                this.renderStock();
+                this.showToast("Producto guardado ✅");
+                document.getElementById('in-name').value = '';
+                document.getElementById('in-cost-v').value = '';
+                document.getElementById('in-cost-c').value = '';
+                document.getElementById('in-qty').value = '';
+            },
 
-        actualizarSelectProductos();
+            renderStock() {
+                const list = document.getElementById('list-stock');
+                list.innerHTML = '';
+                this.state.inv.forEach((p, i) => {
+                    list.innerHTML += `
+                        <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center border border-gray-50">
+                            <div>
+                                <p class="font-bold text-slate-800">${p.name}</p>
+                                <p class="text-[10px] text-gray-400">Venta: $${p.costV} | Ganancia unitaria: $${(p.costV-p.costC).toFixed(2)} | Stock: ${p.stock}</p>
+                            </div>
+                            <button onclick="app.delProd(${i})" class="text-red-200 p-2">🗑️</button>
+                        </div>
+                    `;
+                });
+            },
+
+            delProd(i) {
+                if(confirm("¿Eliminar producto?")) { this.state.inv.splice(i, 1); this.persist(); this.renderStock(); }
+            },
+
+            renderCaja() {
+                const sel = document.getElementById('sel-caja');
+                sel.innerHTML = '<option value="">-- Buscar Producto --</option>';
+                this.state.inv.forEach((p, i) => {
+                    if(p.stock > 0) sel.innerHTML += `<option value="${i}">${p.name} ($${p.costV})</option>`;
+                });
+                this.renderCart();
+            },
+
+            addToCart() {
+                const i = document.getElementById('sel-caja').value;
+                const qty = parseInt(document.getElementById('num-cant').value) || 1;
+                if(i === "") return this.showToast("Selecciona un producto");
+                
+                const p = this.state.inv[i];
+                const exist = this.state.cart.find(c => c.name === p.name);
+                
+                if(exist) {
+                    if(exist.qty + qty <= p.stock) exist.qty += qty;
+                    else return this.showToast("Stock insuficiente");
+                } else {
+                    if(qty <= p.stock) this.state.cart.push({ ...p, qty: qty });
+                    else return this.showToast("Stock insuficiente");
+                }
+                
+                document.getElementById('num-cant').value = 1;
+                this.renderCart();
+            },
+
+            renderCart() {
+                const list = document.getElementById('cart-list');
+                list.innerHTML = this.state.cart.length === 0 ? '<div class="text-center py-10"><p class="text-gray-300 text-xs italic">Carrito vacío</p></div>' : '';
+                let total = 0;
+                this.state.cart.forEach((item, idx) => {
+                    const subtotal = item.costV * item.qty;
+                    total += subtotal;
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-50">
+                            <div class="text-sm">
+                                <p class="font-bold text-slate-800">${item.name}</p>
+                                <p class="text-[10px] text-blue-500">${item.qty} unidad(es) x $${item.costV}</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-black text-slate-700">$${subtotal.toFixed(2)}</span>
+                                <button onclick="app.remCart(${idx})" class="text-red-300">✕</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('cart-total').innerText = total.toFixed(2);
+                this.calcChange();
+            },
+
+            calcChange() {
+                const total = parseFloat(document.getElementById('cart-total').innerText);
+                const rec = parseFloat(document.getElementById('pay-received').value) || 0;
+                const change = rec - total;
+                const display = document.getElementById('pay-change');
+                display.innerText = change > 0 ? change.toFixed(2) : "0.00";
+                
+                const btn = document.getElementById('btn-finalizar');
+                if(total > 0 && rec >= total) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            },
+
+            checkout() {
+                const total = parseFloat(document.getElementById('cart-total').innerText);
+                const rec = parseFloat(document.getElementById('pay-received').value) || 0;
+                const change = rec - total;
+                let neta = 0;
+
+                this.state.cart.forEach(c => {
+                    const p = this.state.inv.find(prod => prod.name === c.name);
+                    if(p) {
+                        p.stock -= c.qty;
+                        neta += (c.costV - c.costC) * c.qty;
+                    }
+                });
+
+                this.state.sales.push({ 
+                    fecha: new Date().toISOString().split('T')[0], 
+                    monto: total, 
+                    neta: neta 
+                });
+
+                document.getElementById('ticket-change').innerText = change.toFixed(2);
+                document.getElementById('modal-ticket').classList.add('active');
+                
+                this.state.cart = [];
+                document.getElementById('pay-received').value = '';
+                this.persist();
+                this.renderCaja();
+            },
+
+            closeTicket() {
+                document.getElementById('modal-ticket').classList.remove('active');
+            },
+
+            clearCart() {
+                this.state.cart = [];
+                this.renderCart();
+            },
+
+            renderReportes() {
+                const hoy = new Date().toISOString().split('T')[0];
+                const deHoy = this.state.sales.filter(s => s.fecha === hoy);
+                document.getElementById('rep-hoy-b').innerText = deHoy.reduce((a, b) => a + b.monto, 0).toFixed(2);
+                document.getElementById('rep-hoy-n').innerText = deHoy.reduce((a, b) => a + b.neta, 0).toFixed(2);
+
+                const body = document.getElementById('table-report-body');
+                body.innerHTML = '';
+                const ag = this.state.sales.reduce((acc, v) => {
+                    acc[v.fecha] = acc[v.fecha] || { m: 0, n: 0 };
+                    acc[v.fecha].m += v.monto;
+                    acc[v.fecha].n += v.neta;
+                    return acc;
+                }, {});
+                Object.keys(ag).reverse().forEach(f => {
+                    body.innerHTML += `
+                        <tr>
+                            <td class="p-4 font-bold text-slate-500">${f}</td>
+                            <td class="p-4 text-right font-black">$${ag[f].m.toFixed(2)}</td>
+                            <td class="p-4 text-right text-emerald-600 font-bold">$${ag[f].n.toFixed(2)}</td>
+                        </tr>`;
+                });
+            },
+
+            exportPDF() {
+                if(!this.state.premium) {
+                    this.showToast("👑 Función solo disponible en PRO");
+                    router.load('premium');
+                    return;
+                }
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                doc.setFontSize(22);
+                doc.text("REPORTE DE VENTAS - MI NEGOCIO", 20, 20);
+                doc.setFontSize(10);
+                doc.text(`Generado: ${new Date().toLocaleString()}`, 20, 30);
+                
+                let y = 50;
+                this.state.sales.forEach((s, i) => {
+                    doc.text(`${s.fecha} - Venta: $${s.monto.toFixed(2)} | Ganancia: $${s.neta.toFixed(2)}`, 20, y);
+                    y += 10;
+                    if(y > 280) { doc.addPage(); y = 20; }
+                });
+                doc.save("Reporte_Negocio.pdf");
+            },
+
+            persist() {
+                localStorage.setItem('pos_inv', JSON.stringify(this.state.inv));
+                localStorage.setItem('pos_sales', JSON.stringify(this.state.sales));
+            },
+
+            showToast(m) {
+                const t = document.getElementById('toast');
+                t.innerText = m; t.classList.remove('hidden');
+                setTimeout(() => t.classList.add('hidden'), 3000);
+            }
+        };
+
+        const router = {
+            load(p) {
+                document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+                document.getElementById(`page-${p}`).classList.add('active');
+                document.querySelectorAll('.nav-icon').forEach(i => i.classList.replace('text-blue-600', 'text-gray-400'));
+                const icons = { caja: 0, stock: 1, reportes: 2, premium: 3 };
+                document.querySelectorAll('.nav-icon')[icons[p]].classList.replace('text-gray-400', 'text-blue-600');
+                
+                if(p === 'caja') app.renderCaja();
+                if(p === 'stock') app.renderStock();
+                if(p === 'reportes') app.renderReportes();
+            }
+        };
+
+        window.onload = () => app.init();
     </script>
 </body>
 </html>
